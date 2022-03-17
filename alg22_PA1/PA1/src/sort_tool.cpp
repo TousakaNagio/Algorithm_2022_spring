@@ -7,6 +7,8 @@
 
 #include "sort_tool.h"
 #include <iostream>
+#include <stdlib.h>
+#include <time.h>
 
 // Constructor
 SortTool::SortTool() {}
@@ -56,25 +58,21 @@ int SortTool::Partition(vector<int> &data, int low, int high)
     // Function : Partition the vector
     // TODO : Please complete the function
     // Hint : Textbook page 171
-    int x;
-    x = data[high];
+
+    srand(time(NULL));
+    int r = rand()%(high - low + 1) + low;
+    swap(data[r], data[high]);
+    
+    int x = data[high];
     int i = low - 1;
     for (int j = low; j <= high - 1; j++)
     {
         if (data[j] <= x)
         {
             i = i + 1;
-            // int temp;
-            // temp = data[i];
-            // data[i] = data[j];
-            // data[j] = temp;
             swap(data[i], data[j]);
         }
     }
-    // int temp;
-    // temp = data[i + 1];
-    // data[i + 1] = data[high];
-    // data[high] = temp;
     swap(data[i + 1], data[high]);
 
     return i + 1;
@@ -91,18 +89,16 @@ void SortTool::MergeSortSubVector(vector<int> &data, int low, int high)
 {
     // Function : Merge sort subvector
     // TODO : Please complete MergeSortSubVector code here
-    if ((high - low) >= 1)
+    if (low < high)
     {
-        int middle1;
-        int middle2;
+        int m1, m2;
+        m1 = (low + high) / 2;
+        m2 = m1 + 1;
 
-        middle1 = (high + low) / 2;
-        middle2 = middle1 + 1;
+        MergeSortSubVector(data, low, m1);
+        MergeSortSubVector(data, m2, high);
 
-        MergeSortSubVector(data, low, middle1);
-        MergeSortSubVector(data, middle2, high);
-
-        Merge(data, low, middle1, middle2, high);
+        Merge(data, low, m1, m2, high);
     }
 
     // Hint : recursively call itself
@@ -110,51 +106,41 @@ void SortTool::MergeSortSubVector(vector<int> &data, int low, int high)
 }
 
 // Merge
-void SortTool::Merge(vector<int> &data, int low, int middle1, int middle2, int high)
+void SortTool::Merge(vector<int> &data, int low, int m1, int m2, int high)
 {
-    // Function : Merge two sorted subvector
-    // TODO : Please complete the function
-    int leftIndex = low;
-    int rightIndex = middle2;
-    int combinedIndex = low;
-    vector<int> combined(data.size());
+    // // Function : Merge two sorted subvector
+    // // TODO : Please complete the function
 
-    while (leftIndex <= middle1 && rightIndex <= high)
+    int n1 = m1 - low + 1;
+    int n2 = high - m1;
+
+    vector<int> L(n1 + 1);
+    vector<int> R(n2 + 1);
+
+    for (int i = 0; i <= n1 - 1; i++)
     {
-        if (data[leftIndex] <= data[rightIndex])
+        L[i] = data[low + i];
+    }
+    for (int j = 0; j <= n2 - 1; j++)
+    {
+        R[j] = data[m1 + j + 1];
+    }
+    L[n1] = 2147483647;
+    R[n2] = 2147483647;
+    int i = 0;
+    int j = 0;
+    for (int k = low; k <= high; k++)
+    {
+        if (L[i] <= R[j])
         {
-            combined[combinedIndex] = data[leftIndex];
-            leftIndex++;
-            combinedIndex++;
+            data[k] = L[i];
+            i++;
         }
         else
         {
-            combined[combinedIndex] = data[rightIndex];
-            rightIndex++;
-            combinedIndex++;
+            data[k] = R[j];
+            j++;
         }
-    }
-
-    if (leftIndex == middle2)
-    {
-        for (int i = rightIndex; i <= high; i++)
-        {
-            combined[combinedIndex] = data[i];
-            combinedIndex++;
-        }
-    }
-    else
-    {
-        for (int i = leftIndex; i <= middle1; i++)
-        {
-            combined[combinedIndex] = data[i];
-            combinedIndex++;
-        }
-    }
-
-    for (int i = low; i <= high; i++)
-    {
-        data[i] = combined[i];
     }
 }
 
