@@ -16,15 +16,15 @@ void CellLegalization::test(vector< vector<long long> > &data)
     //     cout << endl;
     // }
     long long W, num;
-    vector <long long> widths;
-    vector <long long> pos;
-    vector <long long> weights;
+    vector <long long> &widths = data[2];
+    vector <long long> &pos = data[3];
+    vector <long long> &weights = data[4];
 
     W = data[0][0];
     num = data[1][0];
-    widths = data[2];
-    pos = data[3];
-    weights = data[4];
+    // widths = data[2];
+    // pos = data[3];
+    // weights = data[4];
 
     // cout << row_width << endl;
     // cout << number << endl;
@@ -44,15 +44,16 @@ void CellLegalization::test(vector< vector<long long> > &data)
     // Start from here
     vector <long long> S1;
     vector <long long> S2;
-    vector < vector <int> > E;
-    vector <int> path;
+    vector < vector <long long> > E;
+    vector <long long> path;
 
-    for (int i = 0;i < W;i++){
-        S1.push_back(0);
-        S2.push_back(0);
-    }
+    // for (int i = 0;i < W;i++){
+    //     S1.push_back(0);
+    //     S2.push_back(0);
+    // }
+
     for (int i = 0; i < num;i++){
-        vector <int> temp;
+        vector <long long> temp;
         for (int j = 0; j < W;j++){
             temp.push_back(0);
         }
@@ -62,79 +63,73 @@ void CellLegalization::test(vector< vector<long long> > &data)
     int sum = 0;
     for (int i = 0;i < num;i++){
         sum += widths[i];
-        for (int j = 0;j < W;j++){
+        for (int j = sum - 1;j < W;j++){
             if (i == 0){
-                if (j < widths[i] - 1){
-                    S1[j] = 0;
-                    E[i][j] = 0;
-                }
-                else if (j == widths[i] - 1){
-                    S1[j] = weights[i] * abs(j - widths[i] + 1 - pos[i]);
-                    E[i][j] = (int)(j-widths[i]+1);
+                if (j == sum - 1){
+                    S1.push_back(weights[i] * abs(int(0 - pos[i])));
+                    E[i][j] = j-widths[i]+1;
                 }
                 else{
                     long long p = j - widths[i] + 1;
-                    long long temp = weights[i] * abs(p - pos[i]);
-                    S1[j] = min(S1[j-1], temp);
+                    long long temp = weights[i] * abs(int(p - pos[i]));
+                    S1.push_back(min(S1.back(), temp));
                     if (S1[j] == S1[j-1]){
                         E[i][j] = E[i][j-1];
                     }
                     else{
-                        E[i][j] = (int)p;
+                        E[i][j] = p;
                     }
                 }
             }
             else{
                 if (i%2 == 1){
-                    if (j < sum - 1){
-                        S2[j] = S1[j];
-                        E[i][j] = 0;
-                    }
-                    else if (j == sum - 1){
-                        S2[j] = S1[j - widths[i]] + weights[i] * abs(j - widths[i] + 1 - pos[i]);
-                        E[i][j] = (int)(j-widths[i]+1);
+                    if (j == sum - 1){
+                        S2.push_back(S1.front() + weights[i] * abs(int(j - widths[i] + 1 - pos[i])));
+                        E[i][j] = j-widths[i]+1;
                     }
                     else{
                         long long p = j - widths[i] + 1;
-                        long long temp = weights[i] * abs(p - pos[i]);
-                        S2[j] = min(S2[j-1], S1[j - widths[i]] + temp);
+                        long long temp = weights[i] * abs(int(p - pos[i]));
+                        S2.push_back(min(S2.back(), S1[j - sum + 1] + temp));
                         if (S2[j] == S2[j-1]){
                             E[i][j] = E[i][j-1];
                         }
                         else{
-                            E[i][j] = (int)(j-widths[i]+1);
+                            E[i][j] = j-widths[i]+1;
                         }
                     }
                 }
                 else{
-                    if (j < sum - 1){
-                        S1[j] = S2[j];
-                        E[i][j] = 0;
-                    }
-                    else if (j == sum - 1){
-                        S1[j] = S2[j - widths[i]] + weights[i] * abs(j - widths[i] + 1 - pos[i]);
-                        E[i][j] = (int)(j - widths[i] + 1);
+                    if (j == sum - 1){
+                        S1.push_back(S2.front() + weights[i] * abs(int(j - widths[i] + 1 - pos[i])));
+                        E[i][j] = j-widths[i]+1;
                     }
                     else{
                         long long p = j - widths[i] + 1;
-                        long long temp = weights[i] * abs(p - pos[i]);
-                        S1[j] = min(S1[j-1], S2[j - widths[i]] + temp);
-                        if (S1[j] == S1[j-1]){
+                        long long temp = weights[i] * abs(int(p - pos[i]));
+                        S1.push_back(min(S1.back(), S2[j - sum + 1] + temp));
+                        if (S2[j] == S2[j-1]){
                             E[i][j] = E[i][j-1];
                         }
                         else{
-                            E[i][j] = (int)(j-widths[i]+1);
+                            E[i][j] = j-widths[i]+1;
                         }
                     }
                 }
             }
         }
+        if (i%2 == 1){
+            S1.clear();
+        }
+        else{
+            S2.clear();
+        }
     }
     if (num%2 == 0){
-        cout << S2[W-1] << endl;
+        cout << S2.back() << endl;
     }
     else{
-        cout << S1[W-1] << endl;
+        cout << S1.back() << endl;
     }
 
 
@@ -146,6 +141,8 @@ void CellLegalization::test(vector< vector<long long> > &data)
         cout << path[k] << " ";
     }
     cout << endl;
+
+    
     // for (int i = 0;i < W;i++){
     //     cout << S1[i] << " ";
     // }

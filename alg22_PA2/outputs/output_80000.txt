@@ -1,7 +1,0 @@
-# 5 data points
-# index number
-0 600000
-1 0
-2 0
-3 65
-4 0

@@ -3,12 +3,6 @@ import math
 
 def Solve(W, num, widths, pos, weight):
     
-    def Min(S, i, j, widths):
-        p = j - widths[i] + 1
-        temp = weight[i] * abs(p - pos[i])
-        S[i][j] = min(S[i][j-1], S[i-1][j-widths[i]] + temp)
-        pass
-    
     S = np.zeros((num, W))
     E = np.zeros((num, W))
     i, j, count = 0, 0, 0 
@@ -38,7 +32,6 @@ def Solve(W, num, widths, pos, weight):
                 S[i][j] = S[i-1][j-widths[i]] + weight[i] * abs(j - widths[i] + 1 - pos[i])
                 E[i][j] = j - widths[i] + 1
             else:
-                # Min(S, i, j, widths)
                 p = j - widths[i] + 1
                 temp = weight[i] * abs(p - pos[i])
                 S[i][j] = min(S[i][j-1], S[i-1][j-widths[i]] + temp)
@@ -47,7 +40,9 @@ def Solve(W, num, widths, pos, weight):
                 else:
                     E[i][j] = j-widths[i]+1
     print(S)
+    
     print("============================")
+    print(E)
     path = []
     path.append(int(E[num-1][W-1]))
     for i in range(num-2, -1, -1):

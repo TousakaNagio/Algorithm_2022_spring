@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
     vector<string> lines;
     fstream fin(argv[1]);
     fstream fout;
-    fout.open(argv[2],ios::out);
+    fout.open(argv[2], ios::out);
     
     while (getline(fin, line)){
         lines.push_back(line);
@@ -66,31 +66,12 @@ int main(int argc, char* argv[])
     //     cout << endl;
     // }
 
-    //////////// the sorting part ////////////////
+    //////////// the solving part ////////////////
     tmusg.periodStart();
 
     CellLegalization Test;
 
     Test.test(data);
-    // SortTool NTUSortTool; 
-
-    // if(!strcmp(argv[1],"-QS")) {
-    //     NTUSortTool.QuickSort(data);
-    // }
-    // else if(!strcmp(argv[1],"-IS")) {
-    //     NTUSortTool.InsertionSort(data);
-    // }
-    // else if(!strcmp(argv[1],"-MS")) {
-    //     NTUSortTool.MergeSort(data);
-    // }
-    // else if(!strcmp(argv[1],"-HS")) {
-    //     NTUSortTool.HeapSort(data);
-    // }
-    // else {
-    //     help_message();
-    //     return 0;
-    // }
-    // To Do
 
     tmusg.getPeriodUsage(stat);
     cout <<"The total CPU time: " << (stat.uTime + stat.sTime) / 1000.0 << "ms" << endl;
