@@ -40,48 +40,67 @@ int main(int argc, char* argv[])
     while (getline(fin, line)){
         lines.push_back(line);
     }
-
     // for (int i = 0;i < 5;i++){
     //     cout << lines[i] << endl;
     // }
 
-    vector< vector<long long> > data;
+    long long W, num;
 
-    for (int i = 0;i < 5;i++){
+    string dir1;
+    stringstream ss1(lines[0]);
+    while(getline(ss1, dir1, ' ')){
+        // long long temp;
+        W = stoi(dir1);
+    }
+    string dir2;
+    stringstream ss2(lines[1]);
+    while(getline(ss2, dir2, ' ')){
+        // long long temp;
+        num = stoi(dir2);
+    }
+    // cout << W << " " << num << endl;
+
+
+    long long data[3][num];
+    for (int i = 2;i < 5;i++){
         string dir;
         stringstream ss(lines[i]);
-        vector<long long> temps;
-        while(getline(ss, dir, ' ')){
+        for (int j = 0;j < num; j++){
+            getline(ss, dir, ' ');
             long long temp;
             temp = stoi(dir);
-            temps.push_back (temp);
+            data[i-2][j] = temp;
         }
-        data.push_back(temps);
     }
-    
-    // for (int i=0;i<5;i++){
-    //     for (int j=0;j<data[i].size();j++){
-    //         cout << data[i][j] << " ";
-    //     }
-    //     cout << endl;
-    // }
+
+    long long path[num];
+    long long cost;
 
     //////////// the solving part ////////////////
     tmusg.periodStart();
 
     CellLegalization Test;
 
-    Test.test(data);
+    Test.test(W, num, data[0], data[1], data[2], cost, path);
+
+    // // Pinrt out result
+    // cout << cost << endl;
+
+    // for (int l = 0;l < num;l++){
+    //     // count += weights[l] * abs(path[l] - pos[l]);
+    //     cout << path[l] << " ";
+    // }
+    // cout <<  endl;
 
     tmusg.getPeriodUsage(stat);
     cout <<"The total CPU time: " << (stat.uTime + stat.sTime) / 1000.0 << "ms" << endl;
     cout <<"memory: " << stat.vmPeak << "KB" << endl; // print peak memory
 
     //////////// write the output file ///////////
-    fout << "# " << data.size() << " data points" <<endl;
-    fout << "# index number" << endl;
-    for (int i = 0; i < data.size(); i++)
-        fout << i << " " <<data[0][i] << endl;
+    fout << cost << endl;
+    for (int i = 0;i < num; i++){
+        fout << path[i] << endl;
+    }
     fin.close();
     fout.close();
     return 0;

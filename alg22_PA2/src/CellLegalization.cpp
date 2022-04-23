@@ -7,47 +7,47 @@
 // Constructor
 CellLegalization::CellLegalization() {}
 
-void CellLegalization::test(vector< vector<long long> > &data)
+void CellLegalization::test(long long W, long long num, long long *data0, long long *data1, long long *data2,long long &cost, long long *path)
 {
-    // for (int i=0;i<data.size();i++){
-    //     for (int j=0;j<data[i].size();j++){
+    // for (int i=0;i<3;i++){
+    //     for (int j=0;j<num;j++){
     //         cout << data[i][j] << " ";
     //     }
     //     cout << endl;
     // }
-    long long W, num;
-    vector <long long> & widths = data[2];
-    vector <long long> & pos = data[3];;
-    vector <long long> & weights = data[4];;
-
+    // long long W, num;
+    // vector <long long> & widths = data[2];
+    // vector <long long> & pos = data[3];
+    // vector <long long> & weights = data[4];
     
-    W = data[0][0];
-    num = data[1][0];
+    // W = data[0][0];
+    // num = data[1][0];
 
-    // cout << row_width << endl;
-    // cout << number << endl;
-    // for (int i=0;i<cell_width.size()-1;i++){
-    //     cout << cell_width[i] << " ";
+    long long *widths = data0;
+    long long *pos = data1;
+    long long *weights = data2;
+
+    // cout << W << endl;
+    // cout << num << endl;
+    // for(int i=0;i<num;i++){
+    //     cout << widths[i] << " ";
     // }
     // cout << endl;
-    // for (int i=0;i<cell_pos.size()-1;i++){
-    //     cout << cell_pos[i] << " ";
+    // for(int i=0;i<num;i++){
+    //     cout << pos[i] << " ";
     // }
     // cout << endl;
-    // for (int i=0;i<cell_weight.size()-1;i++){
-    //     cout << cell_weight[i] << " ";
+    // for(int i=0;i<num;i++){
+    //     cout << weights[i] << " ";
     // }
     // cout << endl;
+
 
     // Start from here
-    vector <long long> S1;
-    vector <long long> S2;
+    long long S1[W];
+    long long S2[W];
 
-    for (int i = 0;i < W;i++){
-        S1.push_back(0);
-        S2.push_back(0);
-    }
-
+    // DP
     int sum = 0;
     for (int i = 0;i < num;i++){
         sum += widths[i];
@@ -96,32 +96,55 @@ void CellLegalization::test(vector< vector<long long> > &data)
         }
     }
     if (num%2 == 0){
-        cout << S2[W-1] << endl;
+        cost = S2[W-1];
+        // cout << S2[W-1] << endl;
     }
     else{
-        cout << S1[W-1] << endl;
+        cost = S1[W-1];
+        // cout << S1[W-1] << endl;
     }
+    
+    
 
     // Find path
-    vector <long long> path;
-    int idx = W-1;
+    // long long path[num];
+    long long idx = W-1;
+    long long total_width = 0;
+
+    for (int i=0;i<num;i++){
+        // cout << i << ": " << widths[i] << endl;
+        total_width += widths[i];
+    }
+    // cout << "debug" << endl;
+    // cout << total_width << endl;
+
+    // for (int i = 0;i < num;i++){
+    //     cout << path[i] << " ";
+    // }
+    // cout << endl << "Debug2" << endl;
     
+
     for (int i = num-1;i >= 0;i--){
+        total_width -= widths[i];
         if (i % 2 == 1){
             for (int j = idx;j >= 0;j--){
                 if (S2[j] == S2[j-1]){
                     continue;
                 }
                 else{
-                    path.push_back(j - widths[i] + 1);
+                    long long temp = j - widths[i] + 1;
+                    path[i] = j - widths[i] + 1;
                     idx = j - widths[i];
                     break;
                 }
             }
+            if (i <= 1){
+                continue;
+            }
             int k = idx;
-            while (S1[k] != 0){
-                long long h = k - widths[i-1];
-                long long p = h + 1;
+            while (k >= total_width - 1){
+                int h = k - widths[i-1];
+                int p = h + 1;
                 S2[h] = S1[k] - weights[i-1] * abs(p - pos[i-1]);
                 h--;
                 k--;
@@ -133,41 +156,39 @@ void CellLegalization::test(vector< vector<long long> > &data)
                     continue;
                 }
                 else{
-                    path.push_back(j - widths[i] + 1);
+                    long long temp;
+                    temp = j - widths[i] + 1;
+                    path[i] = j - widths[i] + 1;
                     idx = j - widths[i];
                     break;
                 }
             }
+            if (i <= 1){
+                continue;
+            }
             int k = idx;
-            while (S2[k] != 0){
-                long long h = k - widths[i-1];
-                long long p = h + 1;
+            while (k >= total_width - 1){
+                int h = k - widths[i-1];
+                int p = h + 1;
                 S1[h] = S2[k] - weights[i-1] * abs(p - pos[i-1]);
                 h--;
                 k--;
             }
         }
+        // cout << i << ": " << total_width << endl;
     }
-    for (int i = 0;i <= path.size()-1;i++){
-        cout << path[i] << " ";
-    }
-    cout << endl << "Debug2" << endl;
 
-    // path.push_back(E[num-1][W-1]);
-    // for (int k = num-2;k>=0;k--){
-    //     path.push_back(E[k][path.back() - 1]);
+    // // Check path
+    // for (int l = 0;l < num;l++){
+    //     // count += weights[l] * abs(path[l] - pos[l]);
+    //     cout << path[l] << " ";
     // }
-    // for (int k = 0;k < path.size();k++){
-    //     cout << path[k] << " ";
+    // cout <<  endl;
+    
+    // // Check answer
+    // long long count = 0;
+    // for (int l = 0;l < num;l++){
+    //     count += weights[l] * abs(path[l] - pos[l]);
     // }
-    // cout << endl;
-
-    // for (int i = 0;i < W;i++){
-    //     cout << S1[i] << " ";
-    // }
-    // cout << endl;
-    // for (int i = 0;i < W;i++){
-    //     cout << S2[i] << " ";
-    // }
-    // cout << endl;
+    // cout << count << endl;
 }
