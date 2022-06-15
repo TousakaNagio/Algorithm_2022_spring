@@ -1,0 +1,6 @@
+# How to run
+make
+./bin/cb ./inputs/<input_file> ./outputs/<output_file>
+
+if segmentation error occurs:
+run: ulimit -s 262144
