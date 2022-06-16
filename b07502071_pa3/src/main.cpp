@@ -6,13 +6,12 @@
 #include <string.h>
 #include "../lib/tm_usage.h"
 #include "CycleBreaking.h"
-// #define NLM -100
 
 using namespace std;
 
 void help_message()
 {
-    cout << "usage: cb <input_file> <output_file>" << endl;
+    cout << "usage: ./bin/cb <input_file> <output_file>" << endl;
 }
 
 int main(int argc, char *argv[])
@@ -44,17 +43,12 @@ int main(int argc, char *argv[])
     {
         vertices[i] = new int[num_V];
         pi[i] = new int[2];
+        pi[i][0] = -1;
+        pi[i][1] = BOUNDARY;
         for (int j = 0; j < num_V; j++)
         {
-            vertices[i][j] = BOUNDRY;
+            vertices[i][j] = BOUNDARY;
         }
-        i++;
-    }
-    i = 0;
-    while (i < num_V)
-    {
-        pi[i][0] = -1;
-        pi[i][1] = BOUNDRY;
         i++;
     }
     i = 0;

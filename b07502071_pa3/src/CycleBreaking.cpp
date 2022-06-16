@@ -8,7 +8,7 @@
 // Constructor
 CycleBreaking::CycleBreaking() {}
 
-int CycleBreaking::undirectedGraph(int num_V, int num_E, int **G, int **PI)
+int CycleBreaking::undirectedGraph(int num_V, int num_E, int **weights, int **PI)
 {
     int i = 0;
     while (i < num_V)
@@ -27,38 +27,38 @@ int CycleBreaking::undirectedGraph(int num_V, int num_E, int **G, int **PI)
             j++;
         }
 
-        PI[u][1] = BOUNDRY - 1;
+        PI[u][1] = BOUNDARY - 1;
         if (u != 0)
         {
-            if (G[u][PI[u][0]] > G[PI[u][0]][u])
+            if (weights[u][PI[u][0]] <= weights[PI[u][0]][u])
             {
-                G[u][PI[u][0]] = NOQ;
+                weights[PI[u][0]][u] = OUB;
             }
             else
             {
-                G[PI[u][0]][u] = NOQ;
+                weights[u][PI[u][0]] = OUB;
             }
         }
         j = 0;
         while (j < num_V)
         {
-            if (G[u][j] >= LIMIT)
+            if (weights[u][j] >= LIMIT)
             {
-                if ((PI[j][1] != BOUNDRY - 1) && (G[u][j] > PI[j][1]))
+                if ((PI[j][1] != BOUNDARY - 1) && (weights[u][j] > PI[j][1]))
                 {
                     int temp = u;
                     PI[j][0] = temp;
-                    temp = G[u][j];
+                    temp = weights[u][j];
                     PI[j][1] = temp;
                 }
             }
-            if (G[j][u] >= LIMIT)
+            if (weights[j][u] >= LIMIT)
             {
-                if ((PI[j][1] != BOUNDRY - 1) && (G[j][u] > PI[j][1]))
+                if ((PI[j][1] != BOUNDARY - 1) && (weights[j][u] > PI[j][1]))
                 {
                     int temp = u;
                     PI[j][0] = temp;
-                    temp = G[j][u];
+                    temp = weights[j][u];
                     PI[j][1] = temp;
                 }
             }
@@ -73,14 +73,9 @@ int CycleBreaking::undirectedGraph(int num_V, int num_E, int **G, int **PI)
         int j = 0;
         while (j < num_V)
         {
-            if (G[i][j] >= LIMIT)
+            if (weights[i][j] >= LIMIT)
             {
-                sum += G[i][j];
-            }
-            if (G[i][j] <= NIL)
-            {
-                G[i][j] += 1100;
-                sum += G[i][j];
+                sum += weights[i][j];
             }
             j++;
         }
@@ -91,14 +86,14 @@ int CycleBreaking::undirectedGraph(int num_V, int num_E, int **G, int **PI)
     // {
     //     for (int j = 0; j < num_V; j++)
     //     {
-    //         cout << G[i][j] << " ";
+    //         cout << weights[i][j] << " ";
     //     }
     //     cout << PI[i][0] << " " << PI[i][1];
     //     cout << endl;
     // }
     return sum;
 }
-int CycleBreaking::directedGraph(int num_V, int num_E, int **G, int **PI)
+int CycleBreaking::directedGraph(int num_V, int num_E, int **weights, int **PI)
 {
     int i = 0;
     while (i < num_V)
@@ -117,38 +112,38 @@ int CycleBreaking::directedGraph(int num_V, int num_E, int **G, int **PI)
             j++;
         }
 
-        PI[u][1] = BOUNDRY - 1;
+        PI[u][1] = BOUNDARY - 1;
         if (u != 0)
         {
-            if (G[u][PI[u][0]] > G[PI[u][0]][u])
+            if (weights[u][PI[u][0]] <= weights[PI[u][0]][u])
             {
-                G[u][PI[u][0]] = NOQ;
+                weights[PI[u][0]][u] = OUB;
             }
             else
             {
-                G[PI[u][0]][u] = NOQ;
+                weights[u][PI[u][0]] = OUB;
             }
         }
         j = 0;
         while (j < num_V)
         {
-            if (G[u][j] >= LIMIT)
+            if (weights[u][j] >= LIMIT)
             {
-                if ((PI[j][1] != BOUNDRY - 1) && (G[u][j] > PI[j][1]))
+                if ((PI[j][1] != BOUNDARY - 1) && (weights[u][j] > PI[j][1]))
                 {
                     int temp = u;
                     PI[j][0] = temp;
-                    temp = G[u][j];
+                    temp = weights[u][j];
                     PI[j][1] = temp;
                 }
             }
-            if (G[j][u] >= LIMIT)
+            if (weights[j][u] >= LIMIT)
             {
-                if ((PI[j][1] != BOUNDRY - 1) && (G[j][u] > PI[j][1]))
+                if ((PI[j][1] != BOUNDARY - 1) && (weights[j][u] > PI[j][1]))
                 {
                     int temp = u;
                     PI[j][0] = temp;
-                    temp = G[j][u];
+                    temp = weights[j][u];
                     PI[j][1] = temp;
                 }
             }
@@ -163,14 +158,14 @@ int CycleBreaking::directedGraph(int num_V, int num_E, int **G, int **PI)
         s = 0;
         t = 0;
         int i = 0;
-        while (i < num_V)
+        while (i < num_V) // To find out the maximum weight for each vertex
         {
             int j = 0;
             while (j < num_V)
             {
-                if (G[i][j] >= 0)
+                if (weights[i][j] >= 0)
                 {
-                    if (!(G[i][j] <= G[s][t]))
+                    if (!(weights[i][j] <= weights[s][t]))
                     {
                         t = j;
                         s = i;
@@ -188,47 +183,47 @@ int CycleBreaking::directedGraph(int num_V, int num_E, int **G, int **PI)
 
         vector<int> queue;
         queue.push_back(t);
-        bool end;
-        bool *judge;
-        end = false;
-        judge = new bool[num_V];
-        i = 0;
-        while (i < num_V)
+        int finish;
+        int *check;
+        finish = 0;
+        check = new int[num_V];
+        for (int i = 0; i < num_V; i++)
         {
-            judge[i] = false;
-            i++;
+            check[i] = 0;
         }
-        judge[t] = true;
+        check[t] = 1;
 
         int v;
-        while (queue.empty() != true && end != true)
+        while (queue.empty() != true && finish != 1)
         {
             v = queue.front();
             queue.erase(queue.begin());
             int i = 0;
             while (i < num_V)
             {
-                if (G[v][i] == NOQ)
+                if (weights[v][i] == OUB)
                 {
                     if (i == s)
                     {
-                        end = true;
-                        G[s][t] -= 1100;
+                        finish = 1;
+                        weights[s][t] += INFINITY + LIMIT;
                         queue.clear();
-                        break;
                     }
-                    if (judge[i] == false)
+                    if (check[i] == 0)
                     {
                         queue.push_back(i);
-                        judge[i] = true;
+                        check[i] = 1;
                     }
                 }
                 i++;
             }
+            if (finish){
+                break;
+            }
         }
-        if (end == false)
+        if (!finish)
         {
-            G[s][t] = NOQ;
+            weights[s][t] = OUB;
         }
     }
 
@@ -239,14 +234,14 @@ int CycleBreaking::directedGraph(int num_V, int num_E, int **G, int **PI)
         int j = 0;
         while (j < num_V)
         {
-            if (G[i][j] >= LIMIT)
+            if (weights[i][j] >= LIMIT)
             {
-                sum += G[i][j];
+                sum += weights[i][j];
             }
-            if (G[i][j] <= NIL)
+            if (weights[i][j] <= INFINITY)
             {
-                G[i][j] += 1100;
-                sum += G[i][j];
+                weights[i][j] -= INFINITY + LIMIT;
+                sum += weights[i][j];
             }
             j++;
         }

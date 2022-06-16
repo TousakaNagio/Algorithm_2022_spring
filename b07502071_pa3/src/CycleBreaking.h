@@ -1,9 +1,10 @@
 #ifndef _Cycle_Breaking_H
 #define _Cycle_Breaking_H
 #define LIMIT -100
-#define BOUNDRY LIMIT-1
-#define NIL -1000
-#define NOQ -105
+#define BOUNDARY LIMIT-1
+#define OUB BOUNDARY-2
+#define INFINITY -2147483547
+
 
 
 #include<vector>
